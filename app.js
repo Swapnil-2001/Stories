@@ -28,14 +28,15 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // handlebars helpers
-const { formatDate, stripTags, truncate } = require('./helpers/hbs.js')
+const { formatDate, stripTags, truncate, editIcon } = require('./helpers/hbs.js')
 
 // handlebars
 app.engine('.hbs', exphbs({
   helpers: {
     formatDate,
     stripTags,
-    truncate
+    truncate,
+    editIcon
    },
   defaultLayout: 'main',
   extname: '.hbs' }))
@@ -52,6 +53,13 @@ app.use(session({
 // Passport middleware
 app.use(passport.initialize())
 app.use(passport.session())
+
+// Set express global variable
+app.use(function(req, res, next) {
+  // global variable; allows us to access 'user' from within templates
+  res.locals.user = req.user || null
+  next()
+})
 
 // Static folder
 app.use(express.static(path.join(__dirname, 'public')))
